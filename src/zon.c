@@ -1,5 +1,5 @@
 /*
-zon wil print timestamp for sun rise and set
+Zon wil print timestamp for sun rise and set
 Copyright (C) 2021,2022 Copyright Michael Welter
 
 This file is part "zon"
