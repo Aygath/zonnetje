@@ -1,3 +1,5 @@
+# Als je build/ gebruikt als out-of-source builds, dan wordt het iig niet meegenomen in je pushes.
+build/
 # ---> CMake
 CMakeLists.txt.user
 CMakeCache.txt
