@@ -38,13 +38,13 @@ along with zon.  If not, see <http://www.gnu.org/licenses/>.
 #include <signal.h>
 #include <stdbool.h>
 
-const char *argp_program_version =
-PACKAGE_STRING ;
+#include "ZonnetjeConfig.h"
+
 // e.g. from configure PACKAGE_STRING='zon 2020.11'
 const char *argp_program_bug_address =
-PACKAGE_BUGREPORT ;
+"mic@startstop.nl" ;
 // e.g. from configure PACKAGE_BUGREPORT='https://github.com/Aygath/zon'
-const char *sysconfdir = SYSCONFDIR ; 
+const char *sysconfdir = "/etc" ; 
 
 /* Program documentation. */
 static char doc[] =
@@ -521,7 +521,7 @@ while (true)
             fprintf(fp?fp:stdout,"%s%s\n",datestr,(arguments.verbose>=1)?" mid":"");
         }
 	if (fp) fclose(fp);
-        if (arguments.verbose >=2 ) printf("zon  Copyright (C) 2021,2022  Michael Welter\n"
+        if (arguments.verbose >=2 ) printf("zon v??  Copyright (C) 2021,2022  Michael Welter\n"
             "  License GPLv3+: GNU GPL version 3 or later\n"
             "  This program comes with ABSOLUTELY NO WARRANTY.\n"
             "  This is free software, and you are welcome to redistribute it\n"
