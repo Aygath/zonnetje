@@ -42,7 +42,7 @@ along with zon.  If not, see <http://www.gnu.org/licenses/>.
 
 // e.g. from configure PACKAGE_STRING='zon 2020.11'
 const char *argp_program_bug_address =
-"mic@startstop.nl" ;
+"Aygath@github.com" ;
 // e.g. from configure PACKAGE_BUGREPORT='https://github.com/Aygath/zon'
 const char *sysconfdir = "/etc" ; 
 
