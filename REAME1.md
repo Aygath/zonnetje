@@ -1,0 +1,71 @@
+[DESCRIPTION]
+ This is the README for zon
+
+This program will print the time for the next sun rise or sun set in your location. It's purpose is to schedule jobs to be executed at e.g. sun rise. This could be used for swithing on and off your garden lights, solar panels, security alarms etc.
+
+This command line tool could be called in cron or as a timestamp to a systemd-timer at e.g. 1:00 AM to delay the actual execution of a job to sun rise or sun set on the same date. You can delay by using the at command or the systemd-run command (see examples). However, this method might not work in regions with higher latitudes than about 65 degrees. 
+
+In regions above 65 or below -65 degrees latitude the previous scheduling method might not work, because in those regions nights or days can be very short or even non existent periodically. In those cases you can construct a chain of invocations of this tool, because it produces the __next__ sun rise/set, which can be on any later calendar date. Just make sure that your sun-rise job eventually schedules the next invocation of the sun rise job (see examples).
+
+You have to supply your location on earth by latitude and longitude by giving the parameter '-l' or by ~/.config/zon.conf or /etc/zon.conf, see --help instructions below. 
+
+Output is always in UTC, because that is convenient for scripting and unambigious for scheduling. Default output has an ISO time stamp format, eg 2021-02-28T01:00+00:00. For display purposes the regular date command can convert this to whatever desired timezone and formatting, e.g. by 'date -d <isotimestamp>'. See examples.
+
+This program will give you the next rise and/or set time if your system-time is accurate enough. You can however specify any other reference date/time, by supplying a time to zon's  '-d' parameter in ISO format. This ISO format can easily be generated with the 'date -Im' command and may specify a time zone other than UTC. See examples.
+
+With the '-@' parameter output is usable for scheduling with the 'at' command by issuing the 'utc' timezone indicator. Be warned however, that this 'utc' is not always respected due to a bug in some of the previous versions of the 'at' command. A workaround is to set the TZ environment variable to 'utc' before invoking the at command. For example: echo myjob.sh | TZ=utc at `zon -@' will run your job at the next sun rise. Check the resulting schedule with the 'TZ=utc atq' command. 
+
+With the '-y' parameter the output is usable for ad hoc/transient scheduling with the 'systemd-run' command, because it will contain the "UTC" timezone indicator. Be reminded that systemd-run --on-calendar is a recent addition and may not work for you.
+ 
+The '-v' option will add a descriptive label. A repeat of this option will print some more or less useful extra data as well.
+
+Please note: It would be straightforward to include the current local timezone in the output, however i.m.o. this makes no sense because the timezone is subject to future daylight saving time changes rendering the printed time unreliable for scheduling. The 'date' command can handle the changing timezones appropiately if required.
+
+[EXAMPLES]
+Example to schedule a job at sun rise with the at command:
+ export risetime=$(./zon -r@) ; 
+ echo myscheduledjob.sh | TZ=UTC at $risetime ; 
+ echo "The job is scheduled for UTC $risetime"
+
+ export risetime=$(./zon -r)
+ echo myscheduledjob.sh | TZ=UTC at $(date -d $risetime "+%H:%M %Y-%m-%d")  ; 
+ echo "The job is scheduled for local time $(date -d $risetime) 
+
+Example for systemd-run command:
+ export risetime=$(./zon -ry);
+ systemd-run --on-calendar="$risetime" myscheduledjob.sh;
+ echo "The job is scheduled for $risetime"
+
+systemd-run --on-calendar="$(zon --rise --systemd)" touch /tmp/sunrise.time
+
+systemd-run --on-calendar="$(zon -ry)" touch /tmp/sunrise.time
+
+Example to give sunrise time somewhere else in a certain timezone, on a future date after DST switch:
+ zon$ TZ=CET date -d $( zon -rd $(date -Im -d "now + 5 month") -l +490800+1851356 );
+ Sun Aug 15 18:26:00 CEST 2021
+
+
+HOW TO BUILD: 
+This requires the 'autotools' toolchain. With this prequisite fulfilled you can build from source tar-ball with:
+ mkdir workdir ;
+ tar -xvf source-ball.tar
+ autoreconf --install # run this command only if ./configure complains about configure.in) ;
+ ./configure ;
+ make ; 
+ make install ; 
+
+[FILES]
+ /$HOME/.config/zon.conf 
+
+ /etc/zon.conf
+
+first line should contain default latitude en longitude +DDMM[SS]+DDDMM[SS] exactly as below without spaces:
+ 
+ location=+501010+0113030 OR 
+ location=+5010+01130
+
+[AUTHOR]
+Written by Michael Welter, 2021
+
+[COPYRIGHT]
+GNU GENERAL PUBLIC LICENSE Version 3, 1991
